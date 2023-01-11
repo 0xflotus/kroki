@@ -1,11 +1,11 @@
 # syntax=docker/dockerfile:1.4
 ## D2
-FROM golang:1.19.3-alpine3.16 as kroki-builder-d2
+FROM golang:1.19.5-alpine3.16 as kroki-builder-d2
 
 RUN go install oss.terrastruct.com/d2@v0.1.5
 
 ## Nomnoml
-FROM node:16.18.1-alpine3.16 as kroki-builder-nomnoml
+FROM node:16.19.0-alpine3.16 as kroki-builder-nomnoml
 
 # Workaround: https://github.com/nodejs/docker-node/issues/813#issuecomment-407339011
 # Error: could not get uid/gid
@@ -27,7 +27,7 @@ RUN npm run lint
 RUN /usr/local/bin/pkg --targets ${NODE}-${PLATFORM}-${ARCH} . -o app.bin
 
 ## Vega
-FROM node:16.18.1-alpine3.16 as kroki-builder-vega
+FROM node:16.19.0-alpine3.16 as kroki-builder-vega
 
 # Workaround: https://github.com/nodejs/docker-node/issues/813#issuecomment-407339011
 # Error: could not get uid/gid
@@ -62,7 +62,7 @@ RUN /usr/local/bin/pkg --targets ${NODE}-${PLATFORM}-${ARCH} . -o app.bin
 RUN cp /app/node_modules/canvas/build/Release/canvas.node  /app/
 
 ## Wavedrom
-FROM node:16.18.1-alpine3.16 as kroki-builder-wavedrom
+FROM node:16.19.0-alpine3.16 as kroki-builder-wavedrom
 
 # Workaround: https://github.com/nodejs/docker-node/issues/813#issuecomment-407339011
 # Error: could not get uid/gid
@@ -84,7 +84,7 @@ RUN npm run lint
 RUN /usr/local/bin/pkg --targets ${NODE}-${PLATFORM}-${ARCH} . -o app.bin
 
 ## Bytefield
-FROM node:16.18.1-alpine3.16 as kroki-builder-bytefield
+FROM node:16.19.0-alpine3.16 as kroki-builder-bytefield
 
 # Workaround: https://github.com/nodejs/docker-node/issues/813#issuecomment-407339011
 # Error: could not get uid/gid
@@ -129,7 +129,7 @@ FROM yuzutech/kroki-builder-erd:0.2.1.0 as kroki-builder-static-erd
 #  --ghc-options="-w"
 
 ## Pikchr
-FROM alpine:3.16 as kroki-builder-static-pikchr
+FROM alpine:3.17 as kroki-builder-static-pikchr
 
 ARG PIKCHR_VERSION=7269f78c4a3aa2809bd8c278e522c4eac5568ad0fd6ed0a3f807f4a2f6367ef0
 
@@ -143,7 +143,7 @@ RUN wget -q "https://pikchr.org/home/raw/${PIKCHR_VERSION}" -O pikchr.c
 RUN gcc -O0 -g -static -Wall -Wextra -DPIKCHR_SHELL pikchr.c -o pikchr -lm
 
 ## SVGBob
-FROM rust:1.65-slim-bullseye AS kroki-builder-static-svgbob
+FROM rust:1.66-slim-bullseye AS kroki-builder-static-svgbob
 RUN rustup target add x86_64-unknown-linux-musl
 COPY ops/docker/Cargo.toml .
 
